@@ -1,0 +1,34 @@
+version: '2'
+
+services:
+  redis:
+    image: redis
+    container_name: bloom_redis
+    expose:
+      - 6379
+    ports:
+      - 6379:6379
+    volumes:
+      - ./redis-data:/data
+
+  api:
+    build: .
+    container_name: bloom_filter
+    volumes:
+      - .:/var/www/html
+    expose:
+      - 80
+    ports:
+      - 80:80
+      - 443:443
+    links:
+      - redis
+    environment:
+      - REDIS_URL=bloom_redis
+    networks:
+      - default
+    depends_on:
+      - redis
+
+volumes:
+  datastore:
